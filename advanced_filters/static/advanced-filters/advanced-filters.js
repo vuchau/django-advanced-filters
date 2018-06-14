@@ -14,11 +14,13 @@ var OperatorHandlers = function($) {
 		$from.attr("id", "id_form-" + form_num + "-value_from");
 		$from.attr("placeholder", gettext('Start date (YYYY-MM-DD)'));
 		$from.addClass('query-dt-from');
+		$from.addClass('hasDatepicker');
 		var $to = $('<input type="text">');
 		$to.attr("name", "form-" + form_num + "-value_to");
 		$to.attr("id", "id_form-" + form_num + "-value_to");
 		$to.attr("placeholder", gettext('End date (YYYY-MM-DD)'));
 		$to.addClass('query-dt-to');
+		$to.addClass('hasDatepicker');
 
 		self.val_input.parent().prepend($to);
 		self.val_input.parent().prepend($from);
@@ -34,10 +36,12 @@ var OperatorHandlers = function($) {
 		}
 		self.val_input.css({display: 'none'});
 
-		$(".hasDatepicker").datepicker("destroy");
+		$(".hasDatepicker").datepicker({
+			format: 'yyyy/mm/dd'
+		});
 		$from.addClass('vDateField');
 		$to.addClass('vDateField');
-		grappelli.initDateAndTimePicker();
+		//grappelli.initDateAndTimePicker();
 	};
 
 	self.remove_datepickers = function() {
@@ -70,11 +74,13 @@ var OperatorHandlers = function($) {
 						  MODEL_LABEL) + '/' + field;
 		var input = $(elm).parents('tr').find('input.query-value');
 		input.select2("destroy");
-		$.get(choices_url, function(data) {
-			input.select2({'data': data, 'createSearchChoice': function(term) {
-                return { 'id': term, 'text': term };
-            }});
-		});
+		if (input[0].value === "") {
+			$.get(choices_url, function(data) {
+				input.select2({'data': data, 'createSearchChoice': function(term) {
+				return { 'id': term, 'text': term };
+		    	}});
+			});
+		};
 	};
 
 	self.field_selected = function(elm) {
@@ -128,7 +134,6 @@ var OperatorHandlers = function($) {
 			}).change();
 		});
 		self.field_selected($('.form-row select.query-field').first());
-
 	};
 
 	self.destroy = function() {
