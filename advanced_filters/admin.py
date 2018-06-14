@@ -85,6 +85,8 @@ class AdminAdvancedFiltersMixin(object):
                     path=request.path, qparams="?_afilter={id}".format(
                         id=afilter.id))
                 return HttpResponseRedirect(url)
+            else:
+                return HttpResponseRedirect(request.path)
         elif request.method == "POST":
             logger.info('Failed saving advanced filter, params: %s', form.data)
 
