@@ -103,7 +103,7 @@ class AdvancedFilterQueryForm(CleanWhiteSpacesMixin, forms.Form):
             formdata = self.cleaned_data
         key = "{field}__{operator}".format(**formdata)
         if formdata['operator'] == "isnull":
-            return {key: None}
+            return {key: True if formdata.get('value', '').lower() in ['1', 'true', 't'] else False}
         elif formdata['operator'] == "istrue":
             return {formdata['field']: True}
         elif formdata['operator'] == "isfalse":
