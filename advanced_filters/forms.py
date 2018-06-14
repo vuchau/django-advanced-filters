@@ -115,7 +115,7 @@ class AdvancedFilterQueryForm(CleanWhiteSpacesMixin, forms.Form):
         """
         Take a list of query field dict and return data for form initialization
         """
-        operator = 'iexact'
+        operator = None
         if query_data['field'] == '_OR':
             query_data['operator'] = operator
             return query_data
@@ -138,12 +138,13 @@ class AdvancedFilterQueryForm(CleanWhiteSpacesMixin, forms.Form):
         else:
             mfield = mfield[-1]  # get the field object
 
-        if query_data['value'] is None:
-            query_data['operator'] = "isnull"
-        elif query_data['value'] is True:
-            query_data['operator'] = "istrue"
-        elif query_data['value'] is False:
-            query_data['operator'] = "isfalse"
+        if not operator:
+            if query_data['value'] is True:
+                query_data['operator'] = "istrue"
+            elif query_data['value'] is False:
+                query_data['operator'] = "isfalse"
+            else:
+                query_data['operator'] = 'iexact'
         else:
             if isinstance(mfield, DateField):
                 # this is a date/datetime field
@@ -258,12 +259,15 @@ class AdvancedFilterForm(CleanWhiteSpacesMixin, forms.ModelForm):
             'orig_inlines%s.js' % ('' if settings.DEBUG else '.min'),
             'magnific-popup/jquery.magnific-popup.js',
             'advanced-filters/advanced-filters.js',
+            'bootstrap/bootstrap-datepicker.min.js'
         ]
         js = required_js + [SELECT2_JS]
         css = {'screen': [
             SELECT2_CSS,
             'advanced-filters/advanced-filters.css',
-            'magnific-popup/magnific-popup.css'
+            'magnific-popup/magnific-popup.css',
+            'bootstrap/bootstrap-datepicker.standalone.min.css',
+            'bootstrap/bootstrap-datepicker.standalone.min.css.map'
         ]}
 
     def get_fields_from_model(self, model, fields):
